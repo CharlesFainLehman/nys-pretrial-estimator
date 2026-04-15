@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NYC Pretrial Release Estimator</title>
+    <link rel="stylesheet" href="css/estimator.css">
+</head>
+<body>
+
+    <header>
+        <h1>Pretrial Release Estimator</h1>
+        <p class="tagline">What the data says about release, rearrest, and failure to appear &mdash; for any NYC defendant profile.</p>
+    </header>
+
+    <main>
+        <section class="intro">
+            <p>
+                New York's 2020 bail reform sharply limited judges' ability to set bail or detain defendants before trial.
+                Enter a defendant profile below to see how often people matching it were released at arraignment,
+                how often they were rearrested while their case was pending, how often that rearrest was for a violent felony,
+                and how often they failed to appear in court.
+                All rates are drawn directly from <strong>637,000</strong> NYC adult arraignments recorded by DCJS between 2020 and 2025.
+            </p>
+        </section>
+
+        <section class="form" id="form">
+            <div class="field">
+                <label for="f-charge">Top charge at arraignment</label>
+                <select id="f-charge"></select>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="f-sev">Severity</label>
+                    <select id="f-sev"></select>
+                </div>
+                <div class="field">
+                    <label for="f-boro">Borough</label>
+                    <select id="f-boro"></select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="f-age">Age</label>
+                    <select id="f-age"></select>
+                </div>
+                <div class="field">
+                    <label for="f-gender">Gender</label>
+                    <select id="f-gender"></select>
+                </div>
+            </div>
+
+            <div class="row row-3">
+                <div class="field">
+                    <label for="f-vfo">Prior violent felonies</label>
+                    <select id="f-vfo"></select>
+                </div>
+                <div class="field">
+                    <label for="f-nvfo">Prior non-violent felonies</label>
+                    <select id="f-nvfo"></select>
+                </div>
+                <div class="field">
+                    <label for="f-misd">Prior misdemeanors</label>
+                    <select id="f-misd"></select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="f-pending">Pending case at time of arrest</label>
+                <select id="f-pending"></select>
+            </div>
+        </section>
+
+        <section class="results" id="results">
+            <div class="sample-bar">
+                <span class="sample-label">Matching arraignments</span>
+                <span class="sample-value" id="sample-n">&mdash;</span>
+                <span class="sample-note" id="sample-note"></span>
+            </div>
+
+            <div class="cards">
+                <div class="card" data-card="released">
+                    <div class="card-label">Released at arraignment</div>
+                    <div class="card-value" id="v-released">&mdash;</div>
+                    <div class="card-compare" id="c-released"></div>
+                </div>
+                <div class="card" data-card="rearrested">
+                    <div class="card-label">Rearrested while case pending</div>
+                    <div class="card-value" id="v-rearrested">&mdash;</div>
+                    <div class="card-compare" id="c-rearrested"></div>
+                </div>
+                <div class="card" data-card="vf">
+                    <div class="card-label">Violent-felony rearrest (of rearrested)</div>
+                    <div class="card-value" id="v-vf">&mdash;</div>
+                    <div class="card-compare" id="c-vf"></div>
+                </div>
+                <div class="card" data-card="fta">
+                    <div class="card-label">Failed to appear in court</div>
+                    <div class="card-value" id="v-fta">&mdash;</div>
+                    <div class="card-compare" id="c-fta"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="notes">
+            <h3>How to read these numbers</h3>
+            <ul>
+                <li><strong>Released</strong> counts ROR, non-monetary release, and bail-set-and-posted. Remand and bail-set-but-not-posted count as detained.</li>
+                <li><strong>Rearrest</strong> and <strong>FTA</strong> rates are conditional on release &mdash; if the defendant was detained, neither event can occur.</li>
+                <li><strong>Violent felony</strong> rearrest is the share of rearrests with a violent-felony top charge, not the share of all released defendants.</li>
+                <li>Cells with fewer than 30 matching arraignments are flagged; those numbers are noisy.</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <a href="https://ww2.nycourts.gov/pretrial-release-data-33136" target="_blank" rel="noopener">
+            Source: NYS DCJS Supplemental Pretrial Release Data File
+        </a>
+        &middot; Adults (18+) arrested on fingerprinted charges, 2020&ndash;2025
+        &middot; Rates pool all years and mix pre-/post-bail-reform regimes
+    </footer>
+
+    <script src="js/data.js"></script>
+    <script src="js/estimator.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

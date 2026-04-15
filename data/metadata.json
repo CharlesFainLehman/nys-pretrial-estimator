@@ -1,0 +1,46 @@
+{
+  "source": "https://ww2.nycourts.gov/pretrial-release-data-33136",
+  "source_name": "NYS Division of Criminal Justice Services (DCJS)",
+  "description": "Supplemental Pretrial Release Data File, NYC boroughs only, 2019-2025 pooled",
+  "scope": {
+    "geography": "New York City (Bronx, Brooklyn, Manhattan, Queens, Staten Island)",
+    "years": [
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "total_arraignments": 637444,
+    "per_year": {
+      "2020": 76340,
+      "2021": 96599,
+      "2022": 112909,
+      "2023": 127947,
+      "2024": 145203,
+      "2025": 78446
+    }
+  },
+  "overall_rates": {
+    "released_of_n": 0.8590338916045959,
+    "rearrested_of_released": 0.254612060936547,
+    "vf_of_rearrested": 0.13987032175696806,
+    "fta_of_released": 0.12936963326308562
+  },
+  "overall_counts": {
+    "n": 637444,
+    "released": 547586,
+    "released_with_rearrest_info": 547586,
+    "rearrested": 139422,
+    "vf_rearrested": 19501,
+    "fta": 70841
+  },
+  "caveats": [
+    "2019 is pre-bail-reform; pooling across years mixes regimes.",
+    "2025 contains only partial-year data.",
+    "Superior Court data pre-2022 may be incomplete.",
+    "Rows with missing severity, age, gender, priors, or a clear release decision are excluded.",
+    "NULL rearrest values (case still pending at disposition) are excluded from rearrest denominator."
+  ]
+}
