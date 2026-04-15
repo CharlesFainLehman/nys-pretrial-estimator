@@ -29,43 +29,44 @@ function formatOption(dim, label) {
     return label;
 }
 
+// Dimensions that should offer an "All" option (everything except charge).
+const ALLOW_ALL = new Set(['sev', 'boro', 'age', 'gender', 'vfo', 'nvfo', 'misd', 'pending']);
+
 function populateSelects() {
     for (const [fieldId, dim] of Object.entries(FIELD_TO_DIM)) {
         const sel = document.getElementById(fieldId);
         const labels = DATA.labels[dim];
         sel.innerHTML = '';
+
+        if (ALLOW_ALL.has(dim)) {
+            const opt = document.createElement('option');
+            opt.value = 'all';
+            opt.textContent = 'All';
+            sel.appendChild(opt);
+        }
+
         labels.forEach((label, i) => {
             const opt = document.createElement('option');
-            opt.value = i;
+            opt.value = String(i);
             opt.textContent = formatOption(dim, label);
             sel.appendChild(opt);
         });
     }
 
-    // Set sensible defaults: Assault / Felony / Manhattan / 25-34 / Male /
-    // 0 priors / 0 priors / 0 priors / No pending
-    const defaults = {
-        'f-charge': 'Assault',
-        'f-sev': 'Felony',
-        'f-boro': 'Manhattan',
-        'f-age': '25-34',
-        'f-gender': 'Male',
-        'f-vfo': '0',
-        'f-nvfo': '0',
-        'f-misd': '0',
-        'f-pending': 'No',
-    };
-    for (const [fieldId, labelVal] of Object.entries(defaults)) {
-        const dim = FIELD_TO_DIM[fieldId];
-        const idx = DATA.labels[dim].indexOf(labelVal);
-        if (idx >= 0) document.getElementById(fieldId).value = idx;
+    // Default: pick a charge (Assault) and leave every other dimension on "All".
+    const chargeIdx = DATA.labels.charge.indexOf('Assault');
+    if (chargeIdx >= 0) document.getElementById('f-charge').value = String(chargeIdx);
+    for (const dim of ALLOW_ALL) {
+        const fieldId = Object.keys(FIELD_TO_DIM).find(k => FIELD_TO_DIM[k] === dim);
+        document.getElementById(fieldId).value = 'all';
     }
 }
 
 function currentProfile() {
     const profile = {};
     for (const [fieldId, dim] of Object.entries(FIELD_TO_DIM)) {
-        profile[dim] = parseInt(document.getElementById(fieldId).value, 10);
+        const raw = document.getElementById(fieldId).value;
+        profile[dim] = raw === 'all' ? 'all' : parseInt(raw, 10);
     }
     return profile;
 }

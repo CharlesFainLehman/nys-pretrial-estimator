@@ -12,47 +12,49 @@ const C = {
     fta: 5,
 };
 
+// Sentinel value for "All" on a dimension.
+const ALL = 'all';
+
 function query(profile) {
-    // profile is { charge, sev, vfo, nvfo, misd, pending, age, gender, boro } -> indices
+    // profile is { charge, sev, vfo, nvfo, misd, pending, age, gender, boro } -> integer index or 'all'
     const dims = DATA.dims;
-    const key = dims.map(d => profile[d]).join(',');
-    const counts = DATA.cellMap.get(key);
+    const cells = DATA.aggregates.cells;
+    const DIM_COUNT = dims.length;
+
+    // Build a predicate array for the dimensions the user has pinned
+    const pins = [];
+    for (let i = 0; i < DIM_COUNT; i++) {
+        const v = profile[dims[i]];
+        if (v !== ALL && v !== undefined && v !== null) {
+            pins.push([i, v]);
+        }
+    }
+
+    // Accumulate counts across all matching cells
+    let n = 0, released = 0, releasedWithInfo = 0,
+        rearrested = 0, vf = 0, fta = 0;
+    for (const row of cells) {
+        let match = true;
+        for (const [i, v] of pins) {
+            if (row[i] !== v) { match = false; break; }
+        }
+        if (!match) continue;
+        const off = DIM_COUNT;
+        n += row[off + C.n];
+        released += row[off + C.released];
+        releasedWithInfo += row[off + C.released_with_info];
+        rearrested += row[off + C.rearrested];
+        vf += row[off + C.vf_rearrested];
+        fta += row[off + C.fta];
+    }
 
     const out = {
         n: 0,
         released_count: 0,
-        rates: {
-            released: null,
-            rearrested: null,
-            vf: null,
-            fta: null,
-        },
-        deltas: {
-            released: null,
-            rearrested: null,
-            vf: null,
-            fta: null,
-        },
-        flags: {
-            released: false,
-            rearrested: false,
-            vf: false,
-            fta: false,
-            overall: false,
-        },
+        rates: { released: null, rearrested: null, vf: null, fta: null },
+        deltas: { released: null, rearrested: null, vf: null, fta: null },
+        flags: { released: false, rearrested: false, vf: false, fta: false, overall: false },
     };
-
-    if (!counts) {
-        out.flags.overall = true;
-        return out;
-    }
-
-    const n = counts[C.n];
-    const released = counts[C.released];
-    const releasedWithInfo = counts[C.released_with_info];
-    const rearrested = counts[C.rearrested];
-    const vf = counts[C.vf_rearrested];
-    const fta = counts[C.fta];
 
     out.n = n;
     out.released_count = released;
