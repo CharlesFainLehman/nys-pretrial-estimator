@@ -42,6 +42,7 @@ CSV_FILES = [
 ]
 
 SEV_ORDER = ['Felony', 'Misdemeanor']  # Violation too rare to bucket separately here
+ATTEMPT_ORDER = ['Completed', 'Attempted']
 PRIOR_VFO_BUCKETS = ['0', '1', '2+']
 PRIOR_NVFO_BUCKETS = ['0', '1', '2+']
 PRIOR_MISD_BUCKETS = ['0', '1-2', '3+']
@@ -111,6 +112,9 @@ def classify_row(row):
     if sev not in SEV_ORDER:
         return None
 
+    attempt_raw = (row.get('Top_Arraign_Attempt_Indicator') or '').strip()
+    attempt = 'Attempted' if attempt_raw == 'Attempt' else 'Completed'
+
     gender = (row.get('Gender') or '').strip()
     if gender not in GENDER_ORDER:
         return None
@@ -150,7 +154,7 @@ def classify_row(row):
     fta_raw = (row.get('Warrant_Ordered_btw_Arraign_and_Dispo') or '').strip()
     fta = 1 if fta_raw == 'Y' else 0
 
-    dims = (category, sev, vfo, nvfo, misd, pend, age_bucket, gender, COUNTY_TO_BORO_IDX[county])
+    dims = (category, sev, attempt, vfo, nvfo, misd, pend, age_bucket, gender, COUNTY_TO_BORO_IDX[county])
     counters = {
         'released': released,
         'rearrested': released * rearrested * (1 if has_rearrest_info else 0),
@@ -234,6 +238,7 @@ def main():
     charge_labels = sorted(categories)
     charge_idx = {c: i for i, c in enumerate(charge_labels)}
     sev_idx = {s: i for i, s in enumerate(SEV_ORDER)}
+    attempt_idx = {a: i for i, a in enumerate(ATTEMPT_ORDER)}
     vfo_idx = {v: i for i, v in enumerate(PRIOR_VFO_BUCKETS)}
     nvfo_idx = {v: i for i, v in enumerate(PRIOR_NVFO_BUCKETS)}
     misd_idx = {v: i for i, v in enumerate(PRIOR_MISD_BUCKETS)}
@@ -243,19 +248,21 @@ def main():
 
     cells = []
     for key, counts in agg.items():
-        cat, sev, vfo, nvfo, misd, pend, age, gen, boro = key
+        cat, sev, attempt, vfo, nvfo, misd, pend, age, gen, boro = key
         row = [
-            charge_idx[cat], sev_idx[sev], vfo_idx[vfo], nvfo_idx[nvfo],
-            misd_idx[misd], pend_idx[pend], age_idx[age], gender_idx[gen], boro,
+            charge_idx[cat], sev_idx[sev], attempt_idx[attempt],
+            vfo_idx[vfo], nvfo_idx[nvfo], misd_idx[misd], pend_idx[pend],
+            age_idx[age], gender_idx[gen], boro,
         ] + counts
         cells.append(row)
     cells.sort()
 
     aggregates = {
-        'dims': ['charge', 'sev', 'vfo', 'nvfo', 'misd', 'pending', 'age', 'gender', 'boro'],
+        'dims': ['charge', 'sev', 'attempt', 'vfo', 'nvfo', 'misd', 'pending', 'age', 'gender', 'boro'],
         'labels': {
             'charge': charge_labels,
             'sev': SEV_ORDER,
+            'attempt': ATTEMPT_ORDER,
             'vfo': PRIOR_VFO_BUCKETS,
             'nvfo': PRIOR_NVFO_BUCKETS,
             'misd': PRIOR_MISD_BUCKETS,
@@ -311,8 +318,9 @@ def main():
     print(f'\nWrote {agg_path} ({agg_path.stat().st_size/1024:.0f} KB)')
     print(f'Wrote {meta_path}')
 
-    # Spot-check sums
-    sum_n = sum(c[9] for c in cells)
+    # Spot-check sums (dim count + counter offset n = 10 after adding attempt)
+    dim_count = len(aggregates['dims'])
+    sum_n = sum(c[dim_count] for c in cells)
     print(f'\nSpot check: sum(n) over cells = {sum_n:,}  kept_rows = {kept_rows:,}  '
           f'{"MATCH" if sum_n == kept_rows else "MISMATCH"}')
     print(f'Overall rates:')

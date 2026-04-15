@@ -3,6 +3,7 @@
 const FIELD_TO_DIM = {
     'f-charge': 'charge',
     'f-sev': 'sev',
+    'f-attempt': 'attempt',
     'f-boro': 'boro',
     'f-age': 'age',
     'f-gender': 'gender',
@@ -30,7 +31,7 @@ function formatOption(dim, label) {
 }
 
 // Dimensions that should offer an "All" option (everything except charge).
-const ALLOW_ALL = new Set(['sev', 'boro', 'age', 'gender', 'vfo', 'nvfo', 'misd', 'pending']);
+const ALLOW_ALL = new Set(['sev', 'attempt', 'boro', 'age', 'gender', 'vfo', 'nvfo', 'misd', 'pending']);
 
 function populateSelects() {
     for (const [fieldId, dim] of Object.entries(FIELD_TO_DIM)) {
