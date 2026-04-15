@@ -59,6 +59,8 @@ python3 -m http.server 8000
 - Superior Court data pre-2022 may be incomplete.
 - Pooling 2020–2025 mixes several generations of bail-reform rules. Rates should be read as an average across that window, not a prediction of current practice.
 - Rearrest denominators exclude cases where the rearrest outcome was still pending (NULL) at the time of the DCJS extract.
+- **Rearrest data is still maturing for the 2024–2025 cohorts.** The `rearrest` field measures rearrests between arraignment and final disposition of the case; recent cohorts have shorter observation windows because many of their cases are still open. Pooled rearrest rates therefore slightly understate the true long-run share.
+- Cases disposed at arraignment (plea, dismissal, or time-served resolved that day) are excluded because there is no pretrial period over which to measure rearrest or FTA. This mildly understates release rates for charges that frequently end at arraignment.
 - Cells with fewer than 30 matching arraignments are flagged visually — those numbers are noisy.
 
 ## Source

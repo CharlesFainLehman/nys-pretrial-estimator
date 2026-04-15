@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NYC Pretrial Release Estimator</title>
+    <meta name="description" content="Empirical release, rearrest, and failure-to-appear rates for any NYC defendant profile, drawn from ~637,000 NYC adult arraignments recorded by DCJS (2020&ndash;2025).">
+    <meta property="og:title" content="NYC Pretrial Release Estimator">
+    <meta property="og:description" content="What the data says about release, rearrest, and failure to appear for any NYC defendant profile.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231a3a5c'/%3E%3Ctext x='16' y='22' font-family='Helvetica,sans-serif' font-size='20' font-weight='800' text-anchor='middle' fill='white'%3EP%3C/text%3E%3C/svg%3E">
     <link rel="stylesheet" href="css/estimator.css">
 </head>
 <body>
@@ -20,11 +25,11 @@
                 Enter a defendant profile below to see how often people matching it were released at arraignment,
                 how often they were rearrested while their case was pending, how often that rearrest was for a violent felony,
                 and how often they failed to appear in court.
-                All rates are drawn directly from <strong>637,000</strong> NYC adult arraignments recorded by DCJS between 2020 and 2025.
+                All rates are drawn directly from <strong id="intro-total">&mdash;</strong> NYC adult arraignments recorded by DCJS between <span id="intro-years">&mdash;</span>.
             </p>
         </section>
 
-        <section class="form" id="form">
+        <section class="form" autocomplete="off">
             <div class="field">
                 <label for="f-charge">Top charge at arraignment</label>
                 <select id="f-charge"></select>
@@ -114,6 +119,8 @@
                 <li><strong>Released</strong> counts ROR, non-monetary release, and bail-set-and-posted. Remand and bail-set-but-not-posted count as detained.</li>
                 <li><strong>Rearrest</strong> and <strong>FTA</strong> rates are conditional on release &mdash; if the defendant was detained, neither event can occur.</li>
                 <li><strong>Violent felony</strong> rearrest is the share of rearrests with a violent-felony top charge, not the share of all released defendants.</li>
+                <li>Cases <strong>disposed at arraignment</strong> (plea, dismissal, or time-served resolved in court that day) are excluded because they have no pretrial period to measure rearrest or FTA against. This mildly understates the release rate for charges that frequently end at arraignment (low-level misdemeanors, some DWI).</li>
+                <li>Rearrest outcomes for 2024&ndash;2025 arraignments are still maturing: recent cohorts have had less time to accrue rearrests, so pooled rates slightly understate the long-run share.</li>
                 <li>Cells with fewer than 30 matching arraignments are flagged; those numbers are noisy.</li>
             </ul>
         </section>
@@ -123,7 +130,7 @@
         <a href="https://ww2.nycourts.gov/pretrial-release-data-33136" target="_blank" rel="noopener">
             Source: NYS DCJS Supplemental Pretrial Release Data File
         </a>
-        &middot; Adults (18+) arrested on fingerprinted charges, 2020&ndash;2025
+        &middot; Adults (18+) arrested on fingerprinted charges, <span id="footer-years">&mdash;</span>
         &middot; Rates pool all years and mix pre-/post-bail-reform regimes
     </footer>
 

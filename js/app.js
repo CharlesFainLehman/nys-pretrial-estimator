@@ -142,9 +142,30 @@ function wireEvents() {
     }
 }
 
+function fillMetaText() {
+    const scope = DATA.metadata.scope;
+    const years = scope.years;
+    const yearRange = years.length
+        ? (years[0] === years[years.length - 1]
+            ? String(years[0])
+            : `${years[0]}\u2013${years[years.length - 1]}`)
+        : '';
+    const total = scope.total_arraignments;
+    // Round down to the nearest thousand for a clean intro number.
+    const rounded = (Math.floor(total / 1000) * 1000).toLocaleString('en-US');
+
+    const totalEl = document.getElementById('intro-total');
+    const yearsEl = document.getElementById('intro-years');
+    const footerEl = document.getElementById('footer-years');
+    if (totalEl) totalEl.textContent = rounded;
+    if (yearsEl) yearsEl.textContent = yearRange;
+    if (footerEl) footerEl.textContent = yearRange;
+}
+
 async function init() {
     try {
         await loadData();
+        fillMetaText();
         populateSelects();
         wireEvents();
         refresh();

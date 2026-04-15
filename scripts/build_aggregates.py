@@ -5,9 +5,9 @@ Build a sparse aggregate lookup table for the NYC Pretrial Release Estimator.
 Reads the raw DCJS Supplemental Pretrial Release CSVs (2019-2025), filters to
 NYC boroughs, buckets defendant attributes, and produces:
 
-  data/aggregates.json  -- sparse cell counts keyed by the 9-tuple
-                           (charge, severity, prior_vfo, prior_nvfo, prior_misd,
-                            any_pending, age, gender, borough)
+  data/aggregates.json  -- sparse cell counts keyed by the 10-tuple
+                           (charge, severity, attempt, prior_vfo, prior_nvfo,
+                            prior_misd, any_pending, age, gender, borough)
   data/metadata.json    -- label tables, overall NYC rates, sample size, caveats
 
 Usage:
@@ -16,7 +16,6 @@ Usage:
 import argparse
 import csv
 import json
-import sys
 from collections import defaultdict
 from pathlib import Path
 
