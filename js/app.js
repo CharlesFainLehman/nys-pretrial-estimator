@@ -30,8 +30,8 @@ function formatOption(dim, label) {
     return label;
 }
 
-// Dimensions that should offer an "All" option (everything except charge).
-const ALLOW_ALL = new Set(['sev', 'attempt', 'boro', 'age', 'gender', 'vfo', 'nvfo', 'misd', 'pending']);
+// All dimensions offer an "All" option.
+const ALLOW_ALL = new Set(['charge', 'sev', 'attempt', 'boro', 'age', 'gender', 'vfo', 'nvfo', 'misd', 'pending']);
 
 function populateSelects() {
     for (const [fieldId, dim] of Object.entries(FIELD_TO_DIM)) {
@@ -54,12 +54,12 @@ function populateSelects() {
         });
     }
 
-    // Default: pick a charge (Assault) and leave every other dimension on "All".
-    const chargeIdx = DATA.labels.charge.indexOf('Assault');
-    if (chargeIdx >= 0) document.getElementById('f-charge').value = String(chargeIdx);
+    // Default: every dimension on "All" so the form lands on the full NYC aggregate.
+    const DIM_TO_FIELD = Object.fromEntries(
+        Object.entries(FIELD_TO_DIM).map(([f, d]) => [d, f])
+    );
     for (const dim of ALLOW_ALL) {
-        const fieldId = Object.keys(FIELD_TO_DIM).find(k => FIELD_TO_DIM[k] === dim);
-        document.getElementById(fieldId).value = 'all';
+        document.getElementById(DIM_TO_FIELD[dim]).value = 'all';
     }
 }
 
